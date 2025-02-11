@@ -1,46 +1,55 @@
-import Content from "./Content";
-import Header from "./Header";
-import Total from "./Total";
+import { useState } from 'react'
+
+interface ButtonProps {
+  onClick: () => void;
+  text: string;
+}
+
+const Button = (props: ButtonProps) => {
+  return (
+    <button onClick={props.onClick}>
+      {props.text}
+    </button>
+  )
+}
 
 const App = () => {
-  const courseTitle = 'Half Stack application development'
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
 
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-
-  const part3 = 'State of a component'
-  const exercises3 = 14
-
-  const course = {
-    name: courseTitle,
-    parts: [
-      {
-        name: part1,
-        exercises: exercises1
-      },
-      {
-        name: part2,
-        exercises: exercises2
-      },
-      {
-        name: part3,
-        exercises: exercises3
-      }
-    ]
+  const onClick = (newValue:number, option:number) => {
+    switch (option) {
+      case 1:
+        setNeutral(neutral + newValue)
+        break;
+      case 2:
+        setBad(bad + newValue)
+        break;
+      default:
+        setGood(good + newValue)
+        break;
+    }
   }
 
   return (
     <>
-    <div>
-      <Header title={course.name}/>
-      <Content course={course}/>
-      <Total total={course.parts.length}/> 
-    </div>
+      <div>
+        <h2>Give feedback</h2>
+        <p>
+          <Button onClick={() => onClick(1, 0)} text='good' />
+          <Button onClick={() => onClick(1, 1)} text='neutral' />
+          <Button onClick={() => onClick(1, 2)} text='bad' />
+        </p>
+      </div>
+      <div>
+        <h2>Statistics</h2>
+        <p>good {good}</p>
+        <p>neutral {neutral}</p>
+        <p>bad {bad}</p>
+      </div>
     </>
   )
 }
 
-export default App;
+export default App
