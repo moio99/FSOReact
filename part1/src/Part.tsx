@@ -1,15 +1,15 @@
 
-export interface iCourse {
-  course: {
-    part: string;
+export interface iPart {
+  part: {
+    name: string;
     exercises: number;
   }
 }
 
-const Part = ({course}:iCourse) => {
+const Part = ({part}:iPart) => {
   return (
     <div>
-      <p>{course.part} {course.exercises}</p>
+      <p>{part.name} {part.exercises}</p>
     </div>
   );
 };

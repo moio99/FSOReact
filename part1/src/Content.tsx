@@ -1,15 +1,21 @@
-import Part, { iCourse } from "./Part";
+import Part from "./Part";
 
 interface iContent {
-  content: iCourse[]
+  course: {
+    name: string,
+    parts: {
+      name: string;
+      exercises: number;
+    }[];
+  }
 }
 
-const Content = ({content}: iContent) => {
+const Content = ({course}: iContent) => {
   return (
     <>
-      <Part course={content[0].course } />
-      <Part course={content[1].course } />
-      <Part course={content[2].course } />
+      <Part part={course.parts[0] } />
+      <Part part={course.parts[1] } />
+      <Part part={course.parts[2] } />
     </>
   );
 };
