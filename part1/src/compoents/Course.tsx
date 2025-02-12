@@ -27,13 +27,10 @@ const Content = ({parts}: { parts: iPartProps[] }) => {
 }
 
 const Total = ({parts}: { parts: iPartProps[] }) => {
-  let total = 0;
-  parts.forEach(element => {
-    total += element.exercises
-  })
+  const result = parts.reduce((total, part) => total + part.exercises, 0 )
 
   return (
-    <p>Total of {total} exercises</p>
+    <p>Total of {result} exercises</p>
   )
 }
 
