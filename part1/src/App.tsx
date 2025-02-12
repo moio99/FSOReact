@@ -1,27 +1,42 @@
 import { useState } from 'react';
 
-interface ButtonProps {
+interface iButtonProps {
   onClick: () => void;
   text: string;
 }
 
-interface StatisticsProps {
+interface iStatisticsProps {
   goodVal: number;
   neutralVal: number;
   badVal: number;
 }
 
-interface StatisticsLineProps {
+interface iStatisticsLineProps {
   name: string;
   value: number;
   symbol: string;
+}
+
+interface iMostVotesLineProps {
+  votes: { [key: number]: number };
 }
 
 let all = 0;
 let average = 0;
 let positive = 0;
 
-const Button = (props: ButtonProps) => {
+const anecdotes = [
+  'If it hurts, do it more often.',
+  'Adding manpower to a late software project makes it later!',
+  'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+  'Premature optimization is the root of all evil.',
+  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+  'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
+  'The only way to go fast, is to go well.'
+]
+
+const Button = (props: iButtonProps) => {
   return (
     <button onClick={props.onClick}>
       {props.text}
@@ -29,7 +44,7 @@ const Button = (props: ButtonProps) => {
   );
 };
 
-const Statistics = ({ goodVal, neutralVal, badVal }: StatisticsProps) => {
+const Statistics = ({ goodVal, neutralVal, badVal }: iStatisticsProps) => {
   if (all > 0) {
     return (
       <>
@@ -56,7 +71,7 @@ const Statistics = ({ goodVal, neutralVal, badVal }: StatisticsProps) => {
   }
 };
 
-const StatisticLine = ({ name, value, symbol }: StatisticsLineProps) => {
+const StatisticLine = ({ name, value, symbol }: iStatisticsLineProps) => {
   return (
     <tr>
       <td>{name}:</td>
@@ -65,24 +80,33 @@ const StatisticLine = ({ name, value, symbol }: StatisticsLineProps) => {
   );
 };
 
-const App = () => {
+const MostVotesLine = (votes: iMostVotesLineProps) => {
+  let top = 0
+  let topIndex = -1
+  for (let i = 0; i < anecdotes.length; i++) {
+    if (votes.votes[i] > top) {
+      top = votes.votes[i];
+      topIndex = i;
+    }
+  }
+  
+  if (topIndex > -1) {
+    return (
+      <>
+        <h2>Anecdote with most votes</h2>
+        <p>{anecdotes[topIndex]}</p>
+      </>
+    );
+  }
+  else return <p>No votes yet</p>
+};
 
-  const anecdotes = [
-    'If it hurts, do it more often.',
-    'Adding manpower to a late software project makes it later!',
-    'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-    'Premature optimization is the root of all evil.',
-    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
-    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
-    'The only way to go fast, is to go well.'
-  ]
+const App = () => {
 
   const initialVotes: { [key: number]: number } = {};
   for (let i = 0; i < anecdotes.length; i++) {
     initialVotes[i] = 0;
   }
-
   const [votes, setVotes] = useState<{ [key: number]: number }>(initialVotes);
 
   const [good, setGood] = useState(0);
@@ -115,7 +139,6 @@ const App = () => {
     const copy = { ...votes }
     copy[selected] += 1
     setVotes(copy);
-    console.log(copy, selected)
   };
 
   const onClickNextAnecdote = () => {
@@ -137,10 +160,14 @@ const App = () => {
         <Statistics goodVal={good} badVal={bad} neutralVal={neutral} />
       </div>
       <div>
+        <h2>Anecdote of the day</h2>
         <p>{anecdotes[selected]}</p>
         <p>has {votes[selected]} votes</p>
         <Button onClick={() => onClickVote()} text='Vote' />
         <Button onClick={() => onClickNextAnecdote()} text='Next anecdote' />
+      </div>
+      <div>
+        <MostVotesLine votes={votes} />
       </div>
     </>
   );
