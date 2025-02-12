@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 interface ButtonProps {
   onClick: () => void;
@@ -22,70 +22,74 @@ const Button = (props: ButtonProps) => {
     <button onClick={props.onClick}>
       {props.text}
     </button>
-  )
-}
+  );
+};
 
-const Statistics = ({goodVal, neutralVal, badVal}: StatisticsProps) => {
+const Statistics = ({ goodVal, neutralVal, badVal }: StatisticsProps) => {
   if (all > 0) {
     return (
       <>
         <h2>Statistics</h2>
-        <StatisticLine name='good' value={goodVal} symbol='' />
-        <StatisticLine name='neutral' value={neutralVal} symbol='' />
-        <StatisticLine name='bad' value={badVal} symbol='' />
-        <StatisticLine name='all' value={all} symbol='' />
-        <StatisticLine name='average' value={average} symbol='' />
-        <StatisticLine name='positive' value={positive} symbol='%' />
+        <table>
+          <tbody>
+            <StatisticLine name='good' value={goodVal} symbol='' />
+            <StatisticLine name='neutral' value={neutralVal} symbol='' />
+            <StatisticLine name='bad' value={badVal} symbol='' />
+            <StatisticLine name='all' value={all} symbol='' />
+            <StatisticLine name='average' value={average} symbol='' />
+            <StatisticLine name='positive' value={positive} symbol='%' />
+          </tbody>
+        </table>
       </>
-    )
-  }
-  else {
+    );
+  } else {
     return (
       <>
         <h2>Statistics</h2>
         <p>No feedback given</p>
       </>
-    )
+    );
   }
-}
+};
 
-const StatisticLine = ({name, value, symbol}: StatisticsLineProps) => {
+const StatisticLine = ({ name, value, symbol }: StatisticsLineProps) => {
   return (
-    <p>
-      {name}: {value} {symbol}
-    </p>
-  )
-}
+    <tr>
+      <td>{name}:</td>
+      <td>{value} {symbol}</td>
+    </tr>
+  );
+};
 
-let all = 0
-let average = 0
-let positive = 0
+let all = 0;
+let average = 0;
+let positive = 0;
 
 const App = () => {
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  const onClick = (newValue:number, option:number) => {
-    let newGood = good
-    let newBad = bad
+  const onClick = (newValue: number, option: number) => {
+    let newGood = good;
+    let newBad = bad;
     switch (option) {
       case 1:
-        setNeutral(neutral + newValue)
+        setNeutral(neutral + newValue);
         break;
       case 2:
-        newBad = bad + newValue
-        setBad(bad + newValue)
+        newBad = bad + newValue;
+        setBad(bad + newValue);
         break;
       default:
-        newGood = good + newValue
-        setGood(newGood)
+        newGood = good + newValue;
+        setGood(newGood);
         break;
     }
-    all = all + newValue
-    average = ((newGood * 1) + (newBad * -1)) / all
-    positive = (newGood / all) * 100
-  }
+    all = all + newValue;
+    average = ((newGood * 1) + (newBad * -1)) / all;
+    positive = (newGood / all) * 100;
+  };
 
   return (
     <>
@@ -101,7 +105,7 @@ const App = () => {
         <Statistics goodVal={good} badVal={bad} neutralVal={neutral} />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
