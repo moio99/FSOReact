@@ -7,12 +7,86 @@
     <title>Exercise 0</title>
   </head>
   <body>
-    <div>
+    <h2>Normal Sequence Diagram</h2>
+    <ul>
+      <li>
+        <p>On an HTTP POST request to the server address new_note. The server responds with HTTP status code 302
+        </p>
+        <p>The server responds with HTTP status code 302, with which the server asks the browser to make a new HTTP GET request to the address defined in the Location header.</p>
+      </li>
+      <li>
+        <p>The browser reloads the Notes page, the reload causes three more HTTP requests:</p>
+        <ol>Getting the stylesheet (main.css)</ol>
+        <ol>The JavaScript code (main.js)</ol>
+        <ol>The raw data for the notes (data.json)</ol>
+      </li>
+    </ul>
+    <h2>Single page application diagram</h2>
+    <ul>
+      <li>
+        <p>POST Request: The POST request to the new_note_spa address contains the new note as JSON data.</p>
+      </li>
+      <li>
+        <p>Content-Type Header: The Content-Type header of the request tells the server that the data included is represented in JSON format.</p>
+      </li>
+      <li>
+        <p>Server Response: The server responds with a 201 Created status code, using the JavaScript code it got from the server to handle the data to display.</p>
+      </li>
+    </ul>
+    
+    <h2>Single page application diagram - create note</h2>
+    <ul>
+      <li>
+        <p>The user enters a new note into the application form and clicks the "Save" button.</p>
+      </li>
+      <li>
+        <p>The POST request to the "new_note_spa" address contains the new note as JSON data.</p>
+      </li>
+      <li>
+        <p>The "Content-Type" header in the request tells the server that the included data is represented in JSON format.</p>
+      </li>
+      <li>
+        <p>The server processes the request and saves the new note to the database.</p>
+      </li>
+      <li>
+        <p>The server responds with the "201 Created" status code and returns the newly created note along with any additional information needed.</p>
+      </li>
+      <li>
+        <p>JavaScript code on the client receives the server's response and updates the user interface to display the new note without reloading the page.</p>
+      </li>
+    </ul>
 
-    </div>
-    <form action='/exampleapp/new_note' method='POST'>
-      <input type="text" name="note"><br>
-      <input type="submit" value="Save">
+    <h2>Notes</h2>
+    <div id="notes_display"></div>
+    <form id="notes_form">
+      <label for="note_content">New note:</label>
+      <input type="text" id="note_content" name="note_content" required>
+      <button type="submit">Save</button>
     </form>
+  
+    <script>
+      var notes = [];
+  
+      function redrawNotes() {
+        var notesDisplay = document.getElementById('notes_display');
+        notesDisplay.innerHTML = '';
+  
+        notes.forEach(function(note) {
+          var noteElement = document.createElement('div');
+          noteElement.textContent = note;
+          notesDisplay.appendChild(noteElement);
+        });
+      }
+  
+      var form = document.getElementById('notes_form');
+  
+      form.onsubmit = function(e) {
+        e.preventDefault();
+
+        notes.push(e.target.elements[0].value);
+        e.target.elements[0].value = '';
+        redrawNotes();
+      };
+    </script>
   </body>
 </html>
