@@ -1,5 +1,4 @@
 interface iCourseProps {
-  id: number;
   name: string;
   parts: iPartProps[];
 }
@@ -12,7 +11,7 @@ interface iPartProps {
 
 const Header = ({header}: { header: string; }) => {
   return (
-    <h2>{header}</h2>
+    <h3>{header}</h3>
   )
 }
 
@@ -34,13 +33,11 @@ const Total = ({parts}: { parts: iPartProps[] }) => {
   )
 }
 
-const Course = ({ id, name, parts }: iCourseProps) => {
+const Course = ({ name, parts }: iCourseProps) => {
   return (
     <>
       <Header header={name} />
-      <div key={id}>
-        <Content parts={parts} />
-      </div>
+      <Content parts={parts} />
       <Total parts={parts} />
     </>
   )
