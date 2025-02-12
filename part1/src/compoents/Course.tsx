@@ -26,6 +26,17 @@ const Content = ({parts}: { parts: iPartProps[] }) => {
   )
 }
 
+const Total = ({parts}: { parts: iPartProps[] }) => {
+  let total = 0;
+  parts.forEach(element => {
+    total += element.exercises
+  })
+
+  return (
+    <p>Total of {total} exercises</p>
+  )
+}
+
 const Course = ({ id, name, parts }: iCourseProps) => {
   return (
     <>
@@ -33,6 +44,7 @@ const Course = ({ id, name, parts }: iCourseProps) => {
       <div key={id}>
         <Content parts={parts} />
       </div>
+      <Total parts={parts} />
     </>
   )
 }
