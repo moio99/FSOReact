@@ -17,6 +17,10 @@ interface StatisticsLineProps {
   symbol: string;
 }
 
+let all = 0;
+let average = 0;
+let positive = 0;
+
 const Button = (props: ButtonProps) => {
   return (
     <button onClick={props.onClick}>
@@ -61,10 +65,6 @@ const StatisticLine = ({ name, value, symbol }: StatisticsLineProps) => {
   );
 };
 
-let all = 0;
-let average = 0;
-let positive = 0;
-
 const App = () => {
 
   const anecdotes = [
@@ -77,6 +77,13 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
+
+  const initialVotes: { [key: number]: number } = {};
+  for (let i = 0; i < anecdotes.length; i++) {
+    initialVotes[i] = 0;
+  }
+
+  const [votes, setVotes] = useState<{ [key: number]: number }>(initialVotes);
 
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
@@ -104,6 +111,13 @@ const App = () => {
     positive = (newGood / all) * 100;
   };
 
+  const onClickVote = () => {
+    const copy = { ...votes }
+    copy[selected] += 1
+    setVotes(copy);
+    console.log(copy, selected)
+  };
+
   const onClickNextAnecdote = () => {
     const index = Math.floor(Math.random() * anecdotes.length);
     setSelected(index)
@@ -124,6 +138,8 @@ const App = () => {
       </div>
       <div>
         <p>{anecdotes[selected]}</p>
+        <p>has {votes[selected]} votes</p>
+        <Button onClick={() => onClickVote()} text='Vote' />
         <Button onClick={() => onClickNextAnecdote()} text='Next anecdote' />
       </div>
     </>
