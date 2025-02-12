@@ -11,6 +11,12 @@ interface StatisticsProps {
   badVal: number;
 }
 
+interface StatisticsLineProps {
+  name: string;
+  value: number;
+  symbol: string;
+}
+
 const Button = (props: ButtonProps) => {
   return (
     <button onClick={props.onClick}>
@@ -24,16 +30,16 @@ const Statistics = ({goodVal, neutralVal, badVal}: StatisticsProps) => {
     return (
       <>
         <h2>Statistics</h2>
-        <p>good: {goodVal}</p>
-        <p>neutral: {neutralVal}</p>
-        <p>bad: {badVal}</p>
-        <p>all: {all}</p>
-        <p>average: {average}</p>
-        <p>positive: {positive} %</p>
+        <StatisticLine name='good' value={goodVal} symbol='' />
+        <StatisticLine name='neutral' value={neutralVal} symbol='' />
+        <StatisticLine name='bad' value={badVal} symbol='' />
+        <StatisticLine name='all' value={all} symbol='' />
+        <StatisticLine name='average' value={average} symbol='' />
+        <StatisticLine name='positive' value={positive} symbol='%' />
       </>
     )
   }
-  else {    
+  else {
     return (
       <>
         <h2>Statistics</h2>
@@ -41,6 +47,14 @@ const Statistics = ({goodVal, neutralVal, badVal}: StatisticsProps) => {
       </>
     )
   }
+}
+
+const StatisticLine = ({name, value, symbol}: StatisticsLineProps) => {
+  return (
+    <p>
+      {name}: {value} {symbol}
+    </p>
+  )
 }
 
 let all = 0
