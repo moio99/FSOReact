@@ -20,17 +20,27 @@ const Button = (props: ButtonProps) => {
 }
 
 const Statistics = ({goodVal, neutralVal, badVal}: StatisticsProps) => {
-  return (
-    <>
-      <h2>Statistics</h2>
-      <p>good: {goodVal}</p>
-      <p>neutral: {neutralVal}</p>
-      <p>bad: {badVal}</p>
-      <p>all: {all}</p>
-      <p>average: {average}</p>
-      <p>positive: {positive} %</p>
-    </>
-  )
+  if (all > 0) {
+    return (
+      <>
+        <h2>Statistics</h2>
+        <p>good: {goodVal}</p>
+        <p>neutral: {neutralVal}</p>
+        <p>bad: {badVal}</p>
+        <p>all: {all}</p>
+        <p>average: {average}</p>
+        <p>positive: {positive} %</p>
+      </>
+    )
+  }
+  else {    
+    return (
+      <>
+        <h2>Statistics</h2>
+        <p>No feedback given</p>
+      </>
+    )
+  }
 }
 
 let all = 0
