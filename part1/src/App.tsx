@@ -5,11 +5,31 @@ interface ButtonProps {
   text: string;
 }
 
+interface StatisticsProps {
+  goodVal: number;
+  neutralVal: number;
+  badVal: number;
+}
+
 const Button = (props: ButtonProps) => {
   return (
     <button onClick={props.onClick}>
       {props.text}
     </button>
+  )
+}
+
+const Statistics = ({goodVal, neutralVal, badVal}: StatisticsProps) => {
+  return (
+    <>
+      <h2>Statistics</h2>
+      <p>good: {goodVal}</p>
+      <p>neutral: {neutralVal}</p>
+      <p>bad: {badVal}</p>
+      <p>all: {all}</p>
+      <p>average: {average}</p>
+      <p>positive: {positive} %</p>
+    </>
   )
 }
 
@@ -54,13 +74,7 @@ const App = () => {
         </p>
       </div>
       <div>
-        <h2>Statistics</h2>
-        <p>good: {good}</p>
-        <p>neutral: {neutral}</p>
-        <p>bad: {bad}</p>
-        <p>all: {all}</p>
-        <p>average: {average}</p>
-        <p>positive: {positive} %</p>
+        <Statistics goodVal={good} badVal={bad} neutralVal={neutral} />
       </div>
     </>
   )
