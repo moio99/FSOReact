@@ -12,8 +12,12 @@ const App = () => {
     const inputElement = form.querySelector("input[id='nome']") as HTMLInputElement;
     const inputValue = inputElement.value;
 
-    setPersons(persons.concat({id: persons.length, name: inputValue}))
-    setNewName('')
+    if (persons.findIndex(person => person.name === inputValue) > -1) {
+      alert(`${inputValue} is already added to phonebook`)
+    } else {
+      setPersons(persons.concat({id: persons.length, name: inputValue}))
+      setNewName('')
+    }
   }
 
   const handleNoteChange = (event: React.FormEvent<HTMLInputElement>) => {
