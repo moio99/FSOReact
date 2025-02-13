@@ -2,27 +2,35 @@ import { useState } from "react"
 // import Course, { courses, iCourses } from "./compoents/Course"
 
 const App = () => {
-  const [persons, setPersons] = useState([{ id:0, name: 'Arto Hellas' }]) 
+  const [persons, setPersons] = useState([{ id:0, name: 'Arto Hellas', number: '123 456 789' }]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const addPhone = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const form = (event.target as HTMLFormElement);
-    const inputElement = form.querySelector("input[id='nome']") as HTMLInputElement;
-    const inputValue = inputElement.value;
+    const inputName = form.querySelector("input[id='nome']") as HTMLInputElement;
+    const inputNumber = form.querySelector("input[id='numero']") as HTMLInputElement;
+    const inputNameValue = inputName.value;
+    const inputNumerValue = inputNumber.value;
 
-    if (persons.findIndex(person => person.name === inputValue) > -1) {
-      alert(`${inputValue} is already added to phonebook`)
+    if (persons.findIndex(person => person.name === inputNameValue) > -1) {
+      alert(`${inputNameValue} is already added to phonebook`)
     } else {
-      setPersons(persons.concat({id: persons.length, name: inputValue}))
+      setPersons(persons.concat({id: persons.length, name: inputNameValue, number: inputNumerValue}))
       setNewName('')
+      setNewNumber('')
     }
   }
 
-  const handleNoteChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleNameChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = (event.target as HTMLInputElement).value;
     setNewName(inputValue)
+  }
+  const handleNumberChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const inputValue = (event.target as HTMLInputElement).value;
+    setNewNumber(inputValue)
   }
   
   return (
@@ -38,7 +46,10 @@ const App = () => {
         <h2>Phonebook</h2>
         <form onSubmit={addPhone}>
           <div>
-            name: <input id='nome' value={newName} onChange={handleNoteChange}/>
+            name: <input id='nome' value={newName} onChange={handleNameChange}/>
+          </div>
+          <div>
+            number: <input id='numero' value={newNumber} onChange={handleNumberChange}/>
           </div>
           <div>
             <button type='submit'>add</button>
@@ -46,8 +57,8 @@ const App = () => {
         </form>
         <h2>Numbers</h2>
         <div>
-          {persons.map( (person: {id: number, name: string}) => 
-            <div key={person.id}>{person.name}</div>
+          {persons.map( (person: {id: number, name: string, number: string}) => 
+            <div key={person.id}>{person.name} {person.number}</div>
           )}
         </div>
       </div>
