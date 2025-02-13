@@ -1,17 +1,28 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 // import Course, { courses, iCourses } from "./compoents/Course"
 import { Filter, PersonForm, Persons } from "./compoents/Phonebook"
+import axios from "axios"
+
+interface iPerson {
+  id: number;
+  name: string;
+  number: string;
+}
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 0 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 1 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 2 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 3 }
-  ]) 
+  const urlBackend = 'http://localhost:3001/persons'
+  const [persons, setPersons] = useState<iPerson[]>([]);
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  // Com useEffect o seguinte código só se chama umha vez
+  useEffect(() => {
+    axios.get(urlBackend)
+      .then(response => {
+        setPersons(response.data);
+      });
+  }, []); // [] fequencia coa se ejecuta o efecto, [] = só co primeiro renderizado
 
   const handleAddPhone = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -25,9 +36,13 @@ const App = () => {
       if (persons.findIndex(person => person.name === inputNameValue) > -1) {
         alert(`${inputNameValue} is already added to phonebook`)
       } else {
-        setPersons(persons.concat({id: persons.length, name: inputNameValue, number: inputNumerValue}))
-        setNewName('')
-        setNewNumber('')
+        axios
+          .post(urlBackend, {id: persons.length, name: inputNameValue, number: inputNumerValue})
+          .then(response => {
+            setPersons(persons.concat({id: persons.length, name: response.data.name, number: response.data.number}))
+            setNewName('')
+            setNewNumber('')
+          })
       }
     }
   }
