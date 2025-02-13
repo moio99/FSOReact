@@ -1,71 +1,54 @@
-import Course from "./compoents/Course"
-
-interface iCourses {
-  name: string;
-  id: number;
-  parts: {
-      name: string;
-      exercises: number;
-      id: number;
-  }[];
-}
+import { useState } from "react"
+// import Course, { courses, iCourses } from "./compoents/Course"
 
 const App = () => {
-  const courses = [
-    {
-      name: 'Half Stack application development',
-      id: 1,
-      parts: [
-        {
-          name: 'Fundamentals of React',
-          exercises: 10,
-          id: 1
-        },
-        {
-          name: 'Using props to pass data',
-          exercises: 7,
-          id: 2
-        },
-        {
-          name: 'State of a component',
-          exercises: 14,
-          id: 3
-        },
-        {
-          name: 'Redux',
-          exercises: 11,
-          id: 4
-        }
-      ]
-    }, 
-    {
-      name: 'Node.js',
-      id: 2,
-      parts: [
-        {
-          name: 'Routing',
-          exercises: 3,
-          id: 1
-        },
-        {
-          name: 'Middlewares',
-          exercises: 7,
-          id: 2
-        }
-      ]
-    }
-  ]
+  const [persons, setPersons] = useState([{ id:0, name: 'Arto Hellas' }]) 
+  const [newName, setNewName] = useState('')
+
+  const addPhone = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const form = (event.target as HTMLFormElement);
+    const inputElement = form.querySelector("input[id='nome']") as HTMLInputElement;
+    const inputValue = inputElement.value;
+
+    setPersons(persons.concat({id: persons.length, name: inputValue}))
+    setNewName('')
+  }
+
+  const handleNoteChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const inputValue = (event.target as HTMLInputElement).value;
+    setNewName(inputValue)
+  }
   
   return (
     <>
-      <h2>Web development curriculum</h2>
-      {courses.map( (course: iCourses) => 
+      {/* <h2>Web development curriculum</h2>
+      {courses.map((course: iCourses) => (
         <div key={course.id}>
           <Course name={course.name} parts={course.parts} />
         </div>
-      )}
+      ))} */}
+
+      <div>
+        <h2>Phonebook</h2>
+        <form onSubmit={addPhone}>
+          <div>
+            name: <input id='nome' value={newName} onChange={handleNoteChange}/>
+          </div>
+          <div>
+            <button type='submit'>add</button>
+          </div>
+        </form>
+        <h2>Numbers</h2>
+        <div>
+          {persons.map( (person: {id: number, name: string}) => 
+            <div key={person.id}>{person.name}</div>
+          )}
+        </div>
+      </div>
     </>
-  )
+  );
 }
 
 export default App
