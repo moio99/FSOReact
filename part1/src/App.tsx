@@ -31,14 +31,17 @@ const App = () => {
     if (inputNameValue.length > 0) {
       const person = persons.find(person => person.name === inputNameValue)
       if (person) {
-        const updatePerson = {id: person.id, name: inputNameValue, number: inputNumerValue}
-        personsService.update(person.id, updatePerson)
-          .then(response => {
-            console.log('update', response.data)
-            setPersons(persons.map(p => (p.id === person.id ? updatePerson : p)));
-            setNewName('')
-            setNewNumber('')
-          })
+        const confirmText = `The name "${person.name}" is already added to the phonebook, replace the old number "${person.number}" with this "${inputNumerValue}"` 
+        if (window.confirm(confirmText)) {
+          const updatePerson = {id: person.id, name: inputNameValue, number: inputNumerValue}
+          personsService.update(person.id, updatePerson)
+            .then(response => {
+              console.log('update', response.data)
+              setPersons(persons.map(p => (p.id === person.id ? updatePerson : p)));
+              setNewName('')
+              setNewNumber('')
+            })
+        }
       } else {
         const newPerson = {id: persons.length.toString(), name: inputNameValue, number: inputNumerValue}
         personsService.create(newPerson)
