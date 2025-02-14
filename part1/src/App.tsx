@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 // import Course, { courses, iCourses } from "./compoents/Course"
-import { Filter, iPerson, PersonForm, Persons } from "./compoents/Phonebook"
+import { Filter, iPerson, NotificationInfo, PersonForm, Persons } from "./compoents/Phonebook"
 import personsService from './services/persons.tsx'
 
 const App = () => {
@@ -8,6 +8,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [actionInfo, setActionInfo] = useState('')
 
   // Com useEffect o seguinte código só se chama umha vez
   useEffect(() => {
@@ -31,29 +32,46 @@ const App = () => {
     if (inputNameValue.length > 0) {
       const person = persons.find(person => person.name === inputNameValue)
       if (person) {
-        const confirmText = `The name "${person.name}" is already added to the phonebook, replace the old number "${person.number}" with this "${inputNumerValue}"` 
-        if (window.confirm(confirmText)) {
-          const updatePerson = {id: person.id, name: inputNameValue, number: inputNumerValue}
-          personsService.update(person.id, updatePerson)
-            .then(response => {
-              console.log('update', response.data)
-              setPersons(persons.map(p => (p.id === person.id ? updatePerson : p)));
-              setNewName('')
-              setNewNumber('')
-            })
-        }
+        updatePerson(person, inputNameValue, inputNumerValue)
       } else {
-        const newPerson = {id: persons.length.toString(), name: inputNameValue, number: inputNumerValue}
-        personsService.create(newPerson)
-          .then(response => {
-            console.log('create', response.data)
-            setPersons(persons.concat(newPerson))
-            setNewName('')
-            setNewNumber('')
-          })
+        addPerson(inputNameValue, inputNumerValue)
       }
     }
   }
+
+  const updatePerson = (person: iPerson, newName: string, newNumber: string) => { 
+    const confirmText = `The name "${person.name}" is already added to the phonebook, replace the old number "${person.number}" with this "${newNumber}"?` 
+    if (window.confirm(confirmText)) {
+      const updatePerson = {id: person.id, name: newName, number: newNumber}
+      personsService.update(person.id, updatePerson)
+        .then(response => {
+          console.log('update', response.data)
+          setPersons(persons.map(p => (p.id === person.id ? updatePerson : p)));
+          setNewName('')
+          setNewNumber('')
+          showInfo(`Updated name: "${response.data.name}", number: "${response.data.number}"`)
+        })
+    }
+   }
+
+   const addPerson = (newName: string, newNumber: string) => { 
+    const newPerson = {id: persons.length.toString(), name: newName, number: newNumber}
+    personsService.create(newPerson)
+      .then(response => {
+        console.log('create', response.data)
+        setPersons(persons.concat(newPerson))
+        setNewName('')
+        setNewNumber('')
+        showInfo(`Added name: "${response.data.name}", number: "${response.data.number}"`)
+      })
+    }
+
+  const showInfo = (info: string) => { 
+    setActionInfo(info)
+    setTimeout(() => {
+      setActionInfo('')
+    }, 5000)
+   }
 
   const handleFilterChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = (event.target as HTMLInputElement).value;
@@ -93,6 +111,7 @@ const App = () => {
 
       <div>
         <h2>Phonebook</h2>
+        <NotificationInfo message={actionInfo} />
         <Filter value={newFilter} onFilterChange={handleFilterChange} />
         <h2>Add a new</h2>
         <PersonForm newName={newName} newNumber={newNumber} 

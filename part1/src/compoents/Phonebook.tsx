@@ -24,6 +24,27 @@ interface iPersonsProps {
   onDelete: (id: string) => void;
 }
 
+const notificationStyle = {
+  color: 'green',
+  fontStyle: 'italic',
+  fontSize: 16,
+  background: 'lightgrey',
+  padding: '10px',
+  borderStyle: 'solid',
+  borderRadius: '5px',
+  marginBottom: '10px'
+}
+
+export const NotificationInfo = (value: {message: string}) => {
+  if (value.message !== '') {
+    return (
+      <div style={notificationStyle}>
+        {value.message}
+      </div>
+    )
+  }
+}
+
 export const Filter = ({value, onFilterChange}: iFilterInputProps) => {
   return (
     <div>
