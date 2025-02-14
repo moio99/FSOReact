@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 // import Course, { courses, iCourses } from "./compoents/Course"
-import { Filter, PersonForm, Persons } from "./compoents/Phonebook"
-import personsService, { iPerson } from './services/persons.tsx'
+import { Filter, iPerson, PersonForm, Persons } from "./compoents/Phonebook"
+import personsService from './services/persons.tsx'
 
 const App = () => {
   const [persons, setPersons] = useState<iPerson[]>([]);
@@ -29,12 +29,22 @@ const App = () => {
     const inputNameValue = inputName.value;
     const inputNumerValue = inputNumber.value;
     if (inputNameValue.length > 0) {
-      if (persons.findIndex(person => person.name === inputNameValue) > -1) {
-        alert(`${inputNameValue} is already added to phonebook`)
-      } else {
-        personsService.create({id: persons.length, name: inputNameValue, number: inputNumerValue})
+      const person = persons.find(person => person.name === inputNameValue)
+      if (person) {
+        const updatePerson = {id: person.id, name: inputNameValue, number: inputNumerValue}
+        personsService.update(person.id, updatePerson)
           .then(response => {
-            setPersons(persons.concat({id: persons.length, name: response.data.name, number: response.data.number}))
+            console.log('update', response.data)
+            setPersons(persons.map(p => (p.id === person.id ? updatePerson : p)));
+            setNewName('')
+            setNewNumber('')
+          })
+      } else {
+        const newPerson = {id: persons.length.toString(), name: inputNameValue, number: inputNumerValue}
+        personsService.create(newPerson)
+          .then(response => {
+            console.log('create', response.data)
+            setPersons(persons.concat(newPerson))
             setNewName('')
             setNewNumber('')
           })
@@ -54,6 +64,20 @@ const App = () => {
     const inputValue = (event.target as HTMLInputElement).value;
     setNewNumber(inputValue)
   }
+
+  const onDelete = (id: string) => {
+    const person = persons.find(person => person.id === id)
+    if (person) {
+      if (window.confirm(`Delete ${person.name}`)) {
+        personsService.deleteById(id)
+          .then(response => {
+            console.log('delete', response)
+            const newPersons = persons.filter(p => p.id !== id)
+            setPersons(newPersons)
+          })
+      }
+    }
+  };
   
   return (
     <>
@@ -71,7 +95,7 @@ const App = () => {
         <PersonForm newName={newName} newNumber={newNumber} 
           onAddPhone={handleAddPhone} onNameChange={handleNameChange} onNumberChange={handleNumberChange} />
         <h2>Numbers</h2>
-        <Persons persons={persons} newFilter={newFilter} />
+        <Persons persons={persons} newFilter={newFilter} onDelete={onDelete} />
       </div>
     </>
   );

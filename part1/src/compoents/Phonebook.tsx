@@ -12,13 +12,16 @@ interface iPersonFormProps {
   onNumberChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+export interface iPerson {
+  id: string;
+  name: string;
+  number: string;
+}
+
 interface iPersonsProps {
-  persons: {
-    name: string;
-    number: string;
-    id: number;
-  }[];
+  persons: iPerson[];
   newFilter: string;
+  onDelete: (id: string) => void;
 }
 
 export const Filter = ({value, onFilterChange}: iFilterInputProps) => {
@@ -45,12 +48,16 @@ export const PersonForm = ({newName, newNumber, onAddPhone, onNameChange, onNumb
   )
 }
 
-export const Persons = ({persons, newFilter}: iPersonsProps) => {
+export const Persons = ({persons, newFilter, onDelete}: iPersonsProps) => {
   return (
     <div>
-      {persons.map( (person: {id: number, name: string, number: string}) => {
+      {persons.map( (person: iPerson) => {
           if (person.name.toLowerCase().includes(newFilter.toLowerCase())) {
-            return <div key={person.id}>{person.name} {person.number}</div>
+            return ( 
+              <div key={person.id}>
+                {person.name} {person.number} <button onClick={() => onDelete(person.id)}>delete</button>
+              </div>
+            )
           }
         }
       )}

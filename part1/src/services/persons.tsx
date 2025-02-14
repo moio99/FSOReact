@@ -1,12 +1,7 @@
 import axios from 'axios';
+import { iPerson } from '../compoents/Phonebook';
 
 const baseUrl = 'http://localhost:3001/persons';
-
-export interface iPerson {
-  id: number;
-  name: string;
-  number: string;
-}
 
 const getAll = () => {
   const request = axios.get<iPerson[]>(baseUrl)
@@ -17,16 +12,21 @@ const getAll = () => {
   // return axios.get<iPerson[]>(baseUrl);
 };
 
-const create = (newObject: iPerson) => {
-  return axios.post<iPerson>(baseUrl, newObject);
+const create = (person: iPerson) => {
+  return axios.post<iPerson>(baseUrl, person);
 };
 
-const update = (id: number, newObject: iPerson) => {
-  return axios.put<iPerson>(`${baseUrl}/${id}`, newObject);
+const update = (id: string, person: iPerson) => {
+  return axios.put(`${baseUrl}/${id}`, person);
+};
+
+const deleteById = (id: string) => {
+  return axios.delete(`${baseUrl}/${id}`);
 };
 
 export default {
   getAll,
   create,
   update,
+  deleteById,
 };
