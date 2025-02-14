@@ -24,8 +24,12 @@ interface iPersonsProps {
   onDelete: (id: string) => void;
 }
 
+export interface iNotification {
+  text: string;
+  error: boolean;
+}
+
 const notificationStyle = {
-  color: 'green',
   fontStyle: 'italic',
   fontSize: 16,
   background: 'lightgrey',
@@ -35,11 +39,20 @@ const notificationStyle = {
   marginBottom: '10px'
 }
 
-export const NotificationInfo = (value: {message: string}) => {
-  if (value.message !== '') {
+const notificationInfoStyle = (error:boolean) => {
+  if (error) {
+    return {...notificationStyle, color: 'red'}
+  }
+  else {
+    return {...notificationStyle, color: 'green'}
+  }
+}
+
+export const NotificationInfo = (notification: {values: iNotification}) => {
+  if (notification.values.text !== '') {
     return (
-      <div style={notificationStyle}>
-        {value.message}
+      <div style={notificationInfoStyle(notification.values.error)}>
+        {notification.values.text}
       </div>
     )
   }

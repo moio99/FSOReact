@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 // import Course, { courses, iCourses } from "./compoents/Course"
-import { Filter, iPerson, NotificationInfo, PersonForm, Persons } from "./compoents/Phonebook"
+import { Filter, iNotification, iPerson, NotificationInfo, PersonForm, Persons } from "./compoents/Phonebook"
 import personsService from './services/persons.tsx'
 
 const App = () => {
@@ -8,7 +8,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [actionInfo, setActionInfo] = useState('')
+  const [actionInfo, setActionInfo] = useState<iNotification>({text: '', error: false})
 
   // Com useEffect o seguinte código só se chama umha vez
   useEffect(() => {
@@ -51,6 +51,7 @@ const App = () => {
           setNewNumber('')
           showInfo(`Updated name: "${response.data.name}", number: "${response.data.number}"`)
         })
+        .catch(() => { showInfo(`Error on create "${newName}"`, true) })
     }
    }
 
@@ -64,12 +65,14 @@ const App = () => {
         setNewNumber('')
         showInfo(`Added name: "${response.data.name}", number: "${response.data.number}"`)
       })
+      .catch(() => { showInfo(`Error on create "${newName}"`, true) })
     }
 
-  const showInfo = (info: string) => { 
-    setActionInfo(info)
+  const showInfo = (info: string, error?: boolean) => {
+    const newActionInfo = { text: info, error: error ? true : false  }
+    setActionInfo(newActionInfo)
     setTimeout(() => {
-      setActionInfo('')
+      setActionInfo({text: '', error: false})
     }, 5000)
    }
 
@@ -95,6 +98,16 @@ const App = () => {
             console.log('delete', response)
             const newPersons = persons.filter(p => p.id !== id)
             setPersons(newPersons)
+            showInfo(`Deleted name: "${response.data.name}", number: "${response.data.number}"`)
+          })
+          .catch(error => {
+            console.log('delete', error)
+            if (error.status === 404) {
+              showInfo(`Information of "${person.name}" has laready deleted from server`, true)
+            }
+            else {
+              showInfo(`Error on delete "${person.name}"`, true)
+            }
           })
       }
     }
@@ -111,7 +124,7 @@ const App = () => {
 
       <div>
         <h2>Phonebook</h2>
-        <NotificationInfo message={actionInfo} />
+        <NotificationInfo values={actionInfo} />
         <Filter value={newFilter} onFilterChange={handleFilterChange} />
         <h2>Add a new</h2>
         <PersonForm newName={newName} newNumber={newNumber} 
