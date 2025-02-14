@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react"
 // import Course, { courses, iCourses } from "./compoents/Course"
 import { Filter, PersonForm, Persons } from "./compoents/Phonebook"
-import axios from "axios"
-
-interface iPerson {
-  id: number;
-  name: string;
-  number: string;
-}
+import personsService, { iPerson } from './services/persons.tsx'
 
 const App = () => {
-  const urlBackend = 'http://localhost:3001/persons'
   const [persons, setPersons] = useState<iPerson[]>([]);
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
@@ -18,9 +11,12 @@ const App = () => {
 
   // Com useEffect o seguinte código só se chama umha vez
   useEffect(() => {
-    axios.get(urlBackend)
+    personsService.getAll()
       .then(response => {
         setPersons(response.data);
+      })
+      .catch(error => {
+        console.log('fail', error)
       });
   }, []); // [] fequencia coa se ejecuta o efecto, [] = só co primeiro renderizado
 
@@ -36,8 +32,7 @@ const App = () => {
       if (persons.findIndex(person => person.name === inputNameValue) > -1) {
         alert(`${inputNameValue} is already added to phonebook`)
       } else {
-        axios
-          .post(urlBackend, {id: persons.length, name: inputNameValue, number: inputNumerValue})
+        personsService.create({id: persons.length, name: inputNameValue, number: inputNumerValue})
           .then(response => {
             setPersons(persons.concat({id: persons.length, name: response.data.name, number: response.data.number}))
             setNewName('')
