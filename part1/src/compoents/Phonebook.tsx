@@ -1,5 +1,5 @@
 
-interface iFilterInputProps {
+export interface iFilterInputProps {
   value: string;
   onFilterChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
