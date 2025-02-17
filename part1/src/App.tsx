@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Filter, iNotification, iPerson, NotificationInfo, PersonForm, Persons } from "./compoents/Phonebook"
 import personsService from './services/persons.tsx'
 import countriesService, { iCountry } from "./services/countries.tsx";
+import { ShowCountries } from "./compoents/Countries.tsx";
 
 const App = () => {
   const [persons, setPersons] = useState<iPerson[]>([])
@@ -139,6 +140,11 @@ const App = () => {
     const filteredCountries = allCountries.filter(c => c.name.common.toLowerCase().includes(inputValue.toLowerCase()))
     setFilteredCountries(filteredCountries);
   }
+
+  const showCountry = (id: string) => {
+    const filteredCountries = allCountries.filter(c => c.name.common.toLowerCase().includes(id.toLowerCase()))
+    setFilteredCountries(filteredCountries);
+  }
   
   return (
     <>
@@ -150,47 +156,6 @@ const App = () => {
       ))} 
       <hr />*/}
 
-      <div>
-        <h2>Countries</h2>
-        <Filter value={countriesFilter} onFilterChange={handleCountriesFilterChange} />
-        {filteredCountries.length > 10 ? (
-          <>
-            {filteredCountries.length === allCountries.length ? (
-              <p>All countries: {filteredCountries.length}</p>
-            ) : 
-            <p>Too many matches, specify another filter</p>}
-          </>
-        ) : (
-          <>
-            {filteredCountries.length > 1 ? (
-              <>
-                {filteredCountries.map( (country: iCountry) => 
-                  <div key={country.name.common}>{country.name.common}</div>
-                )}
-              </>
-            ) : 
-              <>
-                {filteredCountries.length > 0 && filteredCountries.length < 2 ? (
-                  <div key={filteredCountries[0].fifa}>
-                    <h3>{filteredCountries[0].name.common}</h3>
-                    <div>Capital: {filteredCountries[0].capital}</div>
-                    <div>Area: {filteredCountries[0].area}</div>
-                    <h4>Sanguagues:</h4>
-                    <ul>
-                      {Object.entries(filteredCountries[0].languages).map(([key, value]) => (
-                        <li key={key}>{value}</li>
-                      ))}
-                    </ul>
-                    <img src={filteredCountries[0].flags.png} alt={filteredCountries[0].name.common} />
-                  </div>
-                ) : 
-                <p>{filteredCountries.length}</p>}
-              </>
-            }
-          </>
-        )}
-      </div>
-
       <hr />
       <div>
         <h2>Phonebook</h2>
@@ -201,6 +166,13 @@ const App = () => {
           onAddPhone={handleAddPhone} onNameChange={handleNameChange} onNumberChange={handleNumberChange} />
         <h2>Numbers</h2>
         <Persons persons={persons} newFilter={newFilter} onDelete={deletePerson} />
+      </div>
+
+      <div>
+        <h2>Countries</h2>
+        <Filter value={countriesFilter} onFilterChange={handleCountriesFilterChange} />
+        <ShowCountries filteredCountries={filteredCountries} allCountriesLength={allCountries.length}
+          onShowCountry={showCountry} />
       </div>
     </>
   );
