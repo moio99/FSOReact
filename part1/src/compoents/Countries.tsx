@@ -7,6 +7,52 @@ interface CountryListProps {
   onShowCountry: (id: string) => void;
 }
 
+export interface iWeather {
+  coord: {
+    lon: number;
+    lat: number;
+  };
+  weather: {
+    id: number;
+    main: string;
+    description: string;
+    icon: string;
+  }[];
+  base: string;
+  main: {
+    temp: number;
+    feels_like: number;
+    temp_min: number;
+    temp_max: number;
+    pressure: number;
+    humidity: number;
+    sea_level?: number; // Opcional
+    grnd_level?: number; // Opcional
+  };
+  visibility: number;
+  wind: {
+    speed: number;
+    deg: number;
+    gust?: number; // Opcional
+  };
+  clouds: {
+    all: number;
+  };
+  dt: number;
+  sys: {
+    type?: number; // Opcional
+    id?: number; // Opcional
+    country: string;
+    sunrise: number;
+    sunset: number;
+  };
+  timezone: number;
+  id: number;
+  name: string;
+  cod: number;
+}
+
+
 export const Filter = ({value, onFilterChange}: iFilterInputProps) => {
   return (
     <div>
@@ -61,3 +107,16 @@ export const ShowCountries = ({ filteredCountries, allCountriesLength, onShowCou
 
   return <p>{filteredCountries.length}</p>;
 };
+
+export const ShowWeather = (data: { value: iWeather | undefined }) => {
+  if (data.value) {
+    return (
+      <div>
+        <h2>Weather in {data.value.name}</h2>
+        <div>Temperature: {data.value.main.temp} Celsius</div>
+        <div><img src={`https://openweathermap.org/img/wn/${data.value.weather[0].icon}@2x.png`} alt="" /></div>
+        <div>Wind: {data.value.wind.speed} m/s</div>
+      </div>
+    )
+  }
+}

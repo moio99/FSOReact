@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const baseUrl = 'https://studies.cs.helsinki.fi/restcountries/api';
               // https://studies.cs.helsinki.fi/restcountries/api/all
-              // https://studies.cs.helsinki.fi/restcountries/api/name/spain
+              // https://studies.cs.helsinki.fi/restcountries/api/name/portugal
 
 export interface iCountry {
   name: {
@@ -201,7 +201,13 @@ const getOne = (name: string) => {
   return axios.get(`${baseUrl}/name/${name}`);
 };
 
+const getWeather = (weatherURK:string, weatherApiKey:string, city: string, country: string) => {
+  // https://api.openweathermap.org/data/2.5/weather?q=lugo,es&APPID=XXXXXXXXXXXXXXXXXXXX
+  return axios.get(`${weatherURK}?q=${city},${country}&APPID=${weatherApiKey}&units=metric`);
+};
+
 export default {
   getAll,
   getOne,
+  getWeather
 };

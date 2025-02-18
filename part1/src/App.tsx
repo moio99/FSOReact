@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-// import Course, { courses, iCourses } from "./compoents/Course"
+import Course, { courses, iCourses } from "./compoents/Course"
 import { Filter, iNotification, iPerson, NotificationInfo, PersonForm, Persons } from "./compoents/Phonebook"
 import personsService from './services/persons.tsx'
 import countriesService, { iCountry } from "./services/countries.tsx";
-import { ShowCountries } from "./compoents/Countries.tsx";
+import { iWeather, ShowCountries, ShowWeather } from "./compoents/Countries.tsx";
 
 const App = () => {
   const [persons, setPersons] = useState<iPerson[]>([])
@@ -14,6 +14,7 @@ const App = () => {
   const [countriesFilter, setCountriesFilter] = useState('')
   const [allCountries, setAllCountries] = useState<iCountry[]>([])
   const [filteredCountries, setFilteredCountries] = useState<iCountry[]>([])
+  const [cityWeather, setCityWeather] = useState<iWeather | undefined>(undefined)
 
   let firstGetAll = false
 
@@ -34,7 +35,6 @@ const App = () => {
         .then(countries => {          
           setAllCountries(countries)
           setFilteredCountries(countries)
-          console.log(countries)
         })
         .catch(error => {
           console.log('fail countriesService.getAll', error)
@@ -138,7 +138,24 @@ const App = () => {
     const inputValue = (event.target as HTMLInputElement).value;
     setCountriesFilter(inputValue)
     const filteredCountries = allCountries.filter(c => c.name.common.toLowerCase().includes(inputValue.toLowerCase()))
-    setFilteredCountries(filteredCountries);
+    setFilteredCountries(filteredCountries)
+
+    if (filteredCountries.length === 1) {
+      const url = import.meta.env.VITE_WEATHER_URL
+      const apiKey = import.meta.env.VITE_WEATHER_KEY
+      countriesService.getWeather(url, apiKey, filteredCountries[0].capital[0],filteredCountries[0].flag)
+        .then(weather => {
+          if (weather && weather.data) {
+            setCityWeather(weather.data)
+          }
+        })
+        .catch(error => {
+          console.log('fail countriesService.getAll', error)
+        })
+    }
+    else {
+      setCityWeather(undefined) // limpo os dados do tempo da cidade
+    }
   }
 
   const showCountry = (id: string) => {
@@ -148,13 +165,12 @@ const App = () => {
   
   return (
     <>
-      {/* <h2>Web development curriculum</h2>
+      <h2>Web development curriculum</h2>
       {courses.map((course: iCourses) => (
         <div key={course.id}>
           <Course name={course.name} parts={course.parts} />
         </div>
-      ))} 
-      <hr />*/}
+      ))}
 
       <hr />
       <div>
@@ -167,12 +183,14 @@ const App = () => {
         <h2>Numbers</h2>
         <Persons persons={persons} newFilter={newFilter} onDelete={deletePerson} />
       </div>
-
+      
+      <hr />
       <div>
         <h2>Countries</h2>
         <Filter value={countriesFilter} onFilterChange={handleCountriesFilterChange} />
         <ShowCountries filteredCountries={filteredCountries} allCountriesLength={allCountries.length}
           onShowCountry={showCountry} />
+        <ShowWeather value={cityWeather} />
       </div>
     </>
   );
