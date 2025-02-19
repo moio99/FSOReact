@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import Course, { courses, iCourses } from "./compoents/Course"
+// import Course, { courses, iCourses } from "./compoents/Course"
 import { Filter, iNotification, iPerson, NotificationInfo, PersonForm, Persons } from "./compoents/Phonebook"
 import personsService from './services/persons.tsx'
-import countriesService, { iCountry } from "./services/countries.tsx";
-import { iWeather, ShowCountries, ShowWeather } from "./compoents/Countries.tsx";
+/* import countriesService, { iCountry } from "./services/countries.tsx";
+import { iWeather, ShowCountries, ShowWeather } from "./compoents/Countries.tsx"; */
 
 const App = () => {
   const [persons, setPersons] = useState<iPerson[]>([])
@@ -11,12 +11,12 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [actionInfo, setActionInfo] = useState<iNotification>({text: '', error: false})
-  const [countriesFilter, setCountriesFilter] = useState('')
+  /* const [countriesFilter, setCountriesFilter] = useState('')
   const [allCountries, setAllCountries] = useState<iCountry[]>([])
   const [filteredCountries, setFilteredCountries] = useState<iCountry[]>([])
   const [cityWeather, setCityWeather] = useState<iWeather | undefined>(undefined)
 
-  let firstGetAll = false
+  let firstGetAll = false */
 
   // Com useEffect o seguinte código só se chama umha vez
   useEffect(() => {
@@ -29,7 +29,7 @@ const App = () => {
         console.log('fail personsService.getAll', error)
       })
 
-    if (!firstGetAll) {
+    /* if (!firstGetAll) {
       firstGetAll = true
       countriesService.getAll()
         .then(countries => {          
@@ -39,7 +39,7 @@ const App = () => {
         .catch(error => {
           console.log('fail countriesService.getAll', error)
         })
-    }
+    } */
   }, []) // [] fequencia coa se ejecuta o efecto, [] = só co primeiro renderizado
 
   const handleAddPhone = (event: React.FormEvent<HTMLFormElement>) => {
@@ -134,7 +134,7 @@ const App = () => {
     setNewNumber(inputValue)
   }
   
-  const handleCountriesFilterChange = (event: React.FormEvent<HTMLInputElement>) => {
+  /* const handleCountriesFilterChange = (event: React.FormEvent<HTMLInputElement>) => {
     const inputValue = (event.target as HTMLInputElement).value;
     setCountriesFilter(inputValue)
     const filteredCountries = allCountries.filter(c => c.name.common.toLowerCase().includes(inputValue.toLowerCase()))
@@ -161,18 +161,18 @@ const App = () => {
   const showCountry = (id: string) => {
     const filteredCountries = allCountries.filter(c => c.name.common.toLowerCase().includes(id.toLowerCase()))
     setFilteredCountries(filteredCountries);
-  }
+  } */
   
   return (
     <>
-      <h2>Web development curriculum</h2>
+      {/* <h2>Web development curriculum</h2>
       {courses.map((course: iCourses) => (
         <div key={course.id}>
           <Course name={course.name} parts={course.parts} />
         </div>
       ))}
+      <hr /> */}
 
-      <hr />
       <div>
         <h2>Phonebook</h2>
         <NotificationInfo values={actionInfo} />
@@ -184,14 +184,14 @@ const App = () => {
         <Persons persons={persons} newFilter={newFilter} onDelete={deletePerson} />
       </div>
       
-      <hr />
+      {/* <hr />
       <div>
         <h2>Countries</h2>
         <Filter value={countriesFilter} onFilterChange={handleCountriesFilterChange} />
         <ShowCountries filteredCountries={filteredCountries} allCountriesLength={allCountries.length}
           onShowCountry={showCountry} />
         <ShowWeather value={cityWeather} />
-      </div>
+      </div> */}
     </>
   );
 }

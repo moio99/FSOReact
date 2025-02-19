@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { iPerson } from '../compoents/Phonebook';
 
-const baseUrl = 'http://localhost:3001/persons';
+const baseUrl = 'http://localhost:3001/api/persons';
 
 const getAll = () => {
   const request = axios.get<iPerson[]>(baseUrl)
