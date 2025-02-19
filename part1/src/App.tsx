@@ -23,7 +23,7 @@ const App = () => {
     personsService.getAll()
       .then(response => {
         console.log('getall', 'ok')
-        setPersons(response.data);
+        setPersons(response);
       })
       .catch(error => {
         console.log('fail personsService.getAll', error)
