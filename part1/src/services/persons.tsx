@@ -11,19 +11,10 @@ const getBaseURL = () => {
   return url  
 }
 
-interface iPersonDB {
-  _id: string;
-  __v: number,
-  name: string;
-  number: string;
-}
-
 const getAll = () => {
   const request = axios.get(getBaseURL())
   return request.then(response => {
-    const data = response.data as iPersonDB[]
-    const newData = data.map(p  => ({name: p.name, number: p.number, id: p._id,}))
-    return newData
+    return response.data
   })
   // ou só o seguinte
   // return axios.get<iPerson[]>(getBaseURL())

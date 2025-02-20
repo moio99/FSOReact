@@ -51,7 +51,7 @@ const App = () => {
     const inputNameValue = inputName.value;
     const inputNumerValue = inputNumber.value;
     if (inputNameValue.length > 0) {
-      const person = persons.find(person => person.name === inputNameValue)
+      const person = persons.find(person => person.name.toLocaleLowerCase() === inputNameValue.toLocaleLowerCase())
       if (person) {
         updatePerson(person, inputNameValue, inputNumerValue)
       } else {
@@ -77,10 +77,11 @@ const App = () => {
   }
 
   const addPerson = (newName: string, newNumber: string) => { 
-    const newPerson = {id: persons.length.toString(), name: newName, number: newNumber}
+    const newPerson = {id: '0', name: newName, number: newNumber}
     personsService.create(newPerson)
       .then(response => {
         console.log('create', response.data)
+        newPerson.id = response.data.id
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
