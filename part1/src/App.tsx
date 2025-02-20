@@ -72,7 +72,14 @@ const App = () => {
           setNewNumber('')
           showInfo(`Updated name: "${response.data.name}", number: "${response.data.number}"`)
         })
-        .catch(() => { showInfo(`Error on create "${newName}"`, true) })
+        .catch(error => { 
+          console.log('UpdateError', error.response.data.error)
+          if (error.response.status === 400) {
+            showInfo(error.response.data.error, true) 
+          } else {
+            showInfo(`Error on update "${newName}"`, true) 
+          }
+        })
     }
   }
 
@@ -87,7 +94,14 @@ const App = () => {
         setNewNumber('')
         showInfo(`Added name: "${response.data.name}", number: "${response.data.number}"`)
       })
-      .catch(() => { showInfo(`Error on create "${newName}"`, true) })
+      .catch(error => {
+        console.log('CreateError', error.response.data.error)
+        if (error.response.status === 400) {
+          showInfo(error.response.data.error, true) 
+        } else {
+          showInfo(`Error on create "${newName}"`, true) 
+        }
+      })
   }
 
   const deletePerson = (id: string) => {
