@@ -1,8 +1,13 @@
 import { useSelector, useDispatch } from 'react-redux'
 
 const Notifications = () => {
-  const anecdotes = useSelector(state => state)
   const dispatch = useDispatch()
+  const anecdotes = useSelector(state => {
+    if ( state.filter === '' ) {
+      return state.anecdotes
+    }
+    return state.anecdotes.filter(anect => anect.content.includes(state.filter))
+  })
   
   const vote = (id) => {
     dispatch({
@@ -13,7 +18,6 @@ const Notifications = () => {
   
   return (
     <div>
-      <h2>Anecdotes</h2>
       {anecdotes
         .sort((a, b) => b.votes - a.votes)
         .map(anecdote =>
