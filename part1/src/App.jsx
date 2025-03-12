@@ -1,4 +1,4 @@
-import Notifications from './components/Notifications'
+import Notifications from './components/AnecdoteList'
 import AddNotification from './components/AnecdoteForm'
 
 const App = () => {
