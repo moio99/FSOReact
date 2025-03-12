@@ -19,8 +19,10 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const anecReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'NEW_NOTIFICATION':
+      return [...state, action.payload]
     case 'VOTE':
       return state.map(anecdote => {
         if (anecdote.id === action.payload) {
@@ -34,4 +36,15 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export default reducer
+export const createNotification = (content) => {
+  return {
+    type: 'NEW_NOTIFICATION',
+    payload: {
+      content,
+      votes: 0,
+      id: getId()
+    }
+  }
+}
+
+export default anecReducer
