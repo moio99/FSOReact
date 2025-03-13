@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { createNotification } from '../reducers/anecdoteReducer'
+import { createAnecdote } from '../reducers/anecdoteReducer'
 
 const AddNotification = () => {
   const dispatch = useDispatch()
@@ -8,7 +8,7 @@ const AddNotification = () => {
     event.preventDefault()
     const content = event.target.notification.value
     event.target.notification.value = ''
-    dispatch(createNotification(content))
+    dispatch(createAnecdote(content))
   }
 
   return (

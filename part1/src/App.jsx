@@ -1,5 +1,5 @@
 import Filter from './components/Filter'
-import Notifications from './components/AnecdoteList'
+import AnecdotesList from './components/AnecdoteList'
 import AddNotification from './components/AnecdoteForm'
 
 const App = () => {
@@ -8,7 +8,7 @@ const App = () => {
     <div>
       <h2>Anecdotes</h2>
       <Filter></Filter>
-      <Notifications></Notifications>
+      <AnecdotesList></AnecdotesList>
       <AddNotification></AddNotification>
     </div>
   )

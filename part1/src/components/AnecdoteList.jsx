@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
+import { vote } from '../reducers/anecdoteReducer'
 
-const Notifications = () => {
+const AnecdotesList = () => {
   const dispatch = useDispatch()
   const anecdotes = useSelector(state => {
     if ( state.filter === '' ) {
@@ -9,16 +10,9 @@ const Notifications = () => {
     return state.anecdotes.filter(anect => anect.content.includes(state.filter))
   })
   
-  const vote = (id) => {
-    dispatch({
-      type: 'VOTE',
-      payload: id
-    })
-  }
-  
   return (
     <div>
-      {anecdotes
+      {[...anecdotes]   // .sort() muta o matriz original polo que há que fazer umha copia
         .sort((a, b) => b.votes - a.votes)
         .map(anecdote =>
         <div key={anecdote.id}>
@@ -27,7 +21,7 @@ const Notifications = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => dispatch(vote(anecdote.id))}>vote</button>
           </div>
         </div>
       )}
@@ -35,4 +29,4 @@ const Notifications = () => {
   )
 }
 
-export default Notifications
+export default AnecdotesList
