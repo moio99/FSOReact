@@ -34,6 +34,8 @@ const anecSlice = createSlice({
 
 export const { voteAnecdote, appendAnecdote, setAnecdotes } = anecSlice.actions
 
+// Estos som os 'action creator':
+
 export const initializeAnecdotes = () => {
   return async dispatch => {
     const anecdotes = await anecdoteService.getAll()

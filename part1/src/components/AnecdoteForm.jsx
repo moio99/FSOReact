@@ -10,7 +10,7 @@ const AddNotification = () => {
     const content = event.target.notification.value
     event.target.notification.value = ''
     dispatch(createAnecdote(content))
-    dispatch(setNotification(`Created '${content}'`))
+    dispatch(setNotification(`Created '${content}'`, 5))
   }
 
   return (
