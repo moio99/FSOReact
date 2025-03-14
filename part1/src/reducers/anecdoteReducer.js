@@ -13,19 +13,23 @@ const getId = () => (100000 * Math.random()).toFixed(0)
 
 const asObject = (anecdote) => {
   return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
+    content: anecdote, id: getId(), votes: 0
   }
 }
 
 const initialState = anecdotesAtStart.map(asObject)
 
 const anecSlice = createSlice({
+  // O createSlice é umha funcionalidade do Redux Toolkit que simplifica a criaçom de redutores no Redux.
+  // Em vez de escrever um grande caso de switch num redutor tradicional, 
+  // o createSlice permite definir o estado inicial, os redutores e as açons, todo num só local.
   name: 'anecdotes',
   initialState: initialState,
   reducers: {
-    createAnecdote(state, action) {
+    createAnecdote(state, action) {   // Nom tem return porque nom crea um novo estado só o modifica
+      // Esta funçom modifica o estado directamente utilizando state.push(newAnecdote),
+      // graças a Immer, que está integrado em Redux Toolkit.
+      // Immer permite escrever mutaçons "aparentes" sem violar a inmutabilidade em Redux.
       const newAnecdote = asObject(action.payload)
       state.push(newAnecdote)
     },

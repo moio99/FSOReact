@@ -1,3 +1,7 @@
+
+
+// Cá nom uso o @reduxjs/toolkit
+
 const filterReducer = (state = '', action) => {
   switch (action.type) {
     case 'SET_FILTER':
