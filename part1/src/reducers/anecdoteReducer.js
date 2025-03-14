@@ -16,13 +16,6 @@ const anecSlice = createSlice({
   name: 'anecdotes',
   initialState: [],
   reducers: {
-    createAnecdote(state, action) {   // Nom tem return porque nom crea um novo estado só o modifica
-      // Esta funçom modifica o estado directamente utilizando state.push(newAnecdote),
-      // graças a Immer, que está integrado em Redux Toolkit.
-      // Immer permite escrever mutaçons "aparentes" sem violar a inmutabilidade em Redux.
-      const newAnecdote = asObject(action.payload)
-      state.push(newAnecdote)
-    },
     vote(state, action) {
       console.log(current(state))
       const id = action.payload
@@ -44,12 +37,21 @@ const anecSlice = createSlice({
   },
 })
 
-export const { createAnecdote, vote, showInfo, appendAnecdote, setAnecdotes } = anecSlice.actions
+export const { vote, showInfo, appendAnecdote, setAnecdotes } = anecSlice.actions
 
 export const initializeAnecdotes = () => {
   return async dispatch => {
     const anecdotes = await anecdoteService.getAll()
     dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = content => {
+  return async dispatch => {
+    
+    const newAnecdote = asObject(content)
+    const createAnecdote = await anecdoteService.createNew(newAnecdote)
+    dispatch(appendAnecdote(createAnecdote))
   }
 }
 
