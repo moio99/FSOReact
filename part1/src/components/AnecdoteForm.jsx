@@ -9,7 +9,10 @@ const AnecdoteForm = ({ showInfo }) => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData(['anecdotes']) || []
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
-    }
+    },
+    onError: (error) => {
+      showInfo(error.response.data.error)
+    },
   })
 
   const onCreate = (event) => {
