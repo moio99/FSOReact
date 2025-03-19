@@ -2,22 +2,11 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, useMatch
+  Routes, Route, Link, useMatch, useNavigate
 } from 'react-router-dom'
+import Menu from './componets/Menu'
+import AnecdotesInfo from './componets/AnecdotesInfo'
 import './index.css'
-
-const Menu = () => {
-  const padding = {
-    paddingRight: 5
-  }
-  return (
-    <div>
-      <Link style={padding} to="/">anecdotes</Link>
-      <Link style={padding} to="/create">create new</Link>
-      <Link style={padding} to="/about">about</Link>
-    </div>
-  )
-}
 
 const Anecdote = ({ anecdote }) => {
   return (
@@ -76,16 +65,13 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
-      content,
-      author,
-      info,
-      votes: 0
-    })
+    props.addNew({ content, author, info, votes: 0 })
+    navigate('/')
   }
 
   return (
@@ -108,10 +94,11 @@ const CreateNew = (props) => {
       </form>
     </div>
   )
-
 }
 
 const App = () => {
+  const [notification, setNotification] = useState('')
+
   const [anecdotes, setAnecdotes] = useState([
     {
       content: 'If it hurts, do it more often',
@@ -129,11 +116,17 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
-
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    showInfo(`A new anecdote "${anecdote.content}" created!`)
+  }
+
+  const showInfo = (info) => {
+    setNotification(info)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
   }
 
   const anecdoteById = (id) =>
@@ -155,6 +148,7 @@ const App = () => {
       <div>
         <h1>Software anecdotes</h1>
         <Menu />
+        <AnecdotesInfo info={notification} />
         <Routes>
           <Route path="/anecdotes/:id" element={
             <AnecdoteWrapper anecdotes={anecdotes} />
