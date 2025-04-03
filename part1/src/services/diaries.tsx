@@ -8,7 +8,7 @@ const getBaseURL = () => {
 }
 
 const getAll = () => {
-  const request = axios.get(getBaseURL())
+  const request = axios.get<DiaryEntry[]>(getBaseURL())
   return request.then(response => {
     return response.data
   })
@@ -17,7 +17,7 @@ const getAll = () => {
 }
 
 const create = (diary: NewDiaryEntry) => {
-  return axios.post<NewDiaryEntry>(getBaseURL(), diary)
+  return axios.post<DiaryEntry>(getBaseURL(), diary).then(response => response.data)
 }
 
 const update = (id: string, diary: DiaryEntry) => {
