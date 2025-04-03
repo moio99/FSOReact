@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import diariesService from './services/diaries';
+import { DiaryEntry } from './types';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface ContentProps {
+  diaryParts: DiaryEntry[];
 }
 
-export default App
+const Header = () => {
+  return (
+    <h2>Diary entries</h2>
+  );
+}
+
+const Content = (props: ContentProps) => {
+  return (
+    props.diaryParts.map((part) => (
+      <div key={part.id} style={{ marginBottom: '1em' }}>
+        <strong>{part.date}</strong>
+        <div>visibility: {part.visibility}</div>
+        <div>weather: {part.weather}</div>
+        <div>comement: {part.comment}</div>
+      </div>
+    ))
+  );
+};
+
+const App = () => {
+  const [diaries, setDiaries] = useState<DiaryEntry[]>([])
+
+  // Com useEffect o seguinte código só se chama umha vez
+  useEffect(() => {
+    diariesService.getAll()
+      .then(response => {
+        console.log('getall', 'ok')
+        setDiaries(response);
+      })
+      .catch(error => {
+        console.log('fail diariesService.getAll', error)
+      })
+  }, []) // [] fequencia coa se ejecuta o efecto, [] = só co primeiro renderizado
+
+  return (
+    <div>
+      <Header />
+      <Content diaryParts={diaries} />
+    </div>
+  );
+};
+
+export default App;
