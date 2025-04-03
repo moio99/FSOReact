@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 import diariesService from './services/diaries';
 import { DiaryEntry, Visibility, Weather } from './types';
 
@@ -6,10 +7,25 @@ interface ContentProps {
   diaryParts: DiaryEntry[];
 }
 
+interface ErrorMessage {
+  errorMessage: string;
+}
+
 const Header = () => {
   return (
     <h2>Diary entries</h2>
   );
+}
+
+const Notify = (props: ErrorMessage) => {
+  if ( props.errorMessage === '' ) {
+    return null;
+  }
+  return (
+    <div style={{color: 'red'}}>
+      {props.errorMessage}
+    </div>
+  )
 }
 
 const Content = (props: ContentProps) => {
@@ -26,7 +42,8 @@ const Content = (props: ContentProps) => {
 };
 
 const App = () => {
-  const [diaries, setDiaries] = useState<DiaryEntry[]>([])
+  const [errorMessage, setErrorMessage] = useState('');
+  const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [addDiary, setAddDiary] = useState('');
   const [date, setDate] = useState('');
   const [weather, setWeather] = useState<Weather>(Weather.Sunny);
@@ -37,11 +54,11 @@ const App = () => {
   useEffect(() => {
     diariesService.getAll()
       .then(response => {
-        console.log('getall', 'ok')
+        console.log('getall', 'ok');
         setDiaries(response);
       })
       .catch(error => {
-        console.log('fail diariesService.getAll', error)
+        console.log('fail diariesService.getAll', error);
       })
   }, []) // [] fequencia coa se ejecuta o efecto, [] = só co primeiro renderizado
 
@@ -50,20 +67,37 @@ const App = () => {
     const newDiary = { date, weather, visibility, comment };
     diariesService.create(newDiary)
       .then(response => {
-        setDiaries(diaries.concat(response))
-        console.log('diaryCreation', 'ok')
+        setDiaries(diaries.concat(response));
+        console.log('diaryCreation', 'ok');
       })
       .catch(error => {
-        console.log('fail diariesService.create', error)
+        if (axios.isAxiosError<string, Record<string, unknown>>(error)) {
+          console.log(error.status);
+          if (error.response && error.response.data) {
+            console.error(error.response.data);
+            notify(error.response?.data);
+          }
+        } else {
+          console.error(error);
+        }
       })
     setDate('');
-    setComment('')
-    setAddDiary('')
+    setComment('');
+    setAddDiary('');
+  };
+
+  const notify = (message: string) => {
+    console.log('notify', message)
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage('');
+    }, 10000)
   };
 
   return (
     <div>
       <Header />
+      <Notify errorMessage={errorMessage} />
       { addDiary === '' ? <button onClick={() => setAddDiary('add')}>add new</button> : 
         <div>
           <form onSubmit={diaryCreation}>
