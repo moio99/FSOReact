@@ -66,9 +66,14 @@ const App = () => {
     event.preventDefault();
     const newDiary = { date, weather, visibility, comment };
     diariesService.create(newDiary)
-      .then(response => {
-        setDiaries(diaries.concat(response));
-        console.log('diaryCreation', 'ok');
+      .then(() => {
+        return diariesService.getAll();
+      })
+      .then((updatedDiaries) => {
+        setDiaries(updatedDiaries);
+        setDate('');
+        setComment('');
+        setAddDiary('');
       })
       .catch(error => {
         if (axios.isAxiosError<string, Record<string, unknown>>(error)) {
@@ -103,19 +108,27 @@ const App = () => {
           <form onSubmit={diaryCreation}>
             <div>
               date:
-              <input value={date} onChange={(event) => setDate(event.target.value)} />
+              <input type='date' value={date} onChange={(event) => setDate(event.target.value)} />
             </div>
             <div>
               weather: 
-              <select value={weather} onChange={(event) => setWeather(event.target.value as Weather)}>
-                {Object.values(Weather).map((weather) => <option key={weather}>{weather}</option>)}
-              </select>
+              {Object.values(Weather).map((weather) => 
+                <label key={weather}>{weather}
+                  <input type='radio' name='weather' 
+                    value={weather} checked={weather === weather} 
+                    onChange={(event) => setWeather(event.target.value as Weather)} />
+                </label>
+              )}
             </div>
             <div>
               visibility:
-              <select value={visibility} onChange={(event) => setVisibility(event.target.value as Visibility)}>
-                {Object.values(Visibility).map((visibility) => <option key={visibility}>{visibility}</option>)}
-              </select>
+              {Object.values(Visibility).map((visibility) => 
+                <label key={visibility}>{visibility}
+                  <input type='radio' name='visibility' 
+                    value={visibility} checked={visibility === visibility} 
+                    onChange={(event) => setVisibility(event.target.value as Visibility)} />
+                </label>
+              )}
             </div>
             <div>
               comment:
