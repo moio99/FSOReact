@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import patientService from "../../services/patients";
-import { Patient } from '../../types';
+import { Gender, Patient } from '../../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
@@ -25,11 +25,11 @@ const PatientPage = () => {
 
   const getGenderIcon = (gender: string) => {
     switch (gender) {
-      case 'male':
+      case Gender.Male:
         return <MaleIcon />;
-      case 'female':
+      case Gender.Female:
         return <FemaleIcon />;
-      case 'other':
+      case Gender.Other:
         return <TransgenderIcon />;
       default:
         return null;
@@ -42,6 +42,19 @@ const PatientPage = () => {
         <h2>{patient.name} {getGenderIcon(patient.gender)}</h2>
         <div>ssh: {patient.ssn}</div>
         <div>occupation: {patient.occupation}</div>
+        {patient.entries ? (
+          <div>
+            <h3>entries</h3>
+            {patient.entries.map((entry) => (
+              <div key={entry.id}>
+                <p>{entry.date} {entry.description}</p>
+                { entry.diagnosisCodes ? (
+                  <ul>{entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}</ul>
+                ) : (<p>no diagnosis</p>) }
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
     );
   } else {
