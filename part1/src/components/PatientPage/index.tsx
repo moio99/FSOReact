@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import patientService from "../../services/patients";
-import { Gender, Patient } from '../../types';
+import diagnoesService from "../../services/diagnoses";
+import { Entry, Gender, Patient } from '../../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
@@ -15,8 +16,28 @@ const PatientPage = () => {
     if (id) {
       const fetchPatient = async () => {
         const patientRecived = await patientService.getPatient(id);
-        setPatient(patientRecived);
+        const newPatient = { 
+          ...patientRecived, 
+          entries: await Promise.all(patientRecived.entries.map(async (entry: Entry) => {
+            if (entry && entry.diagnosisCodes && entry.diagnosisCodes.length > 0) {
+              const descriptions = await Promise.all(
+                entry.diagnosisCodes.map(async (code) => {
+                  const diagnosis = await diagnoesService.getDiagnosis(code);
+                  return diagnosis.name;
+                })
+              );
+              return {
+                ...entry, 
+                diagnosisDescriptions: descriptions
+              };
+            } else {
+              return entry;
+            }
+          }))
+        };
+        setPatient(newPatient);
       };
+      
       void fetchPatient();
     } else {
       setPatient(undefined);
@@ -49,7 +70,13 @@ const PatientPage = () => {
               <div key={entry.id}>
                 <p>{entry.date} {entry.description}</p>
                 { entry.diagnosisCodes ? (
-                  <ul>{entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}</ul>
+                  <ul>
+                  {entry.diagnosisCodes?.map((code, i) => (
+                    <li key={code}>
+                      {code} {entry.diagnosisDescriptions ? entry.diagnosisDescriptions[i] : 'no description'}
+                    </li>
+                  ))}
+                </ul>                
                 ) : (<p>no diagnosis</p>) }
               </div>
             ))}
