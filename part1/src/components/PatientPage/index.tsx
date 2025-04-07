@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import patientService from "../../services/patients";
 import diagnoesService from "../../services/diagnoses";
-import { Entry, Gender, HealthCheckEntry, HospitalEntry, OccupationalHealthCareEntry, Patient } from '../../types';
+import { Entry, EntryFormValues, Gender, HealthCheckEntry, HospitalEntry, OccupationalHealthCareEntry, Patient } from '../../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import { Button } from "@mui/material";
+import AddEntryModal from "../AddEntryModal";
+import axios from "axios";
 
 type EntryDetailProps = {
   entry: Entry;
@@ -62,6 +65,7 @@ const EntryDetailDefault = ({ entry }: EntryDetailProps) => {
 };
 
 const EntryDetail = ({ entry }: EntryDetailProps) => {
+  console.log(entry.type);
   switch (entry.type) {
     case 'HealthCheck':
       return (
@@ -88,11 +92,16 @@ const EntryDetail = ({ entry }: EntryDetailProps) => {
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient | undefined>(undefined);
+  const [allCodes, setAllCodes] = useState<string[]>([]);
   const { id } = useParams();
-  
+
   useEffect(() => {
     if (id) {
       const fetchPatient = async () => {
+        
+        const arrayAllCodes = await diagnoesService.getDiagnosisCodes();
+        setAllCodes(arrayAllCodes);
+
         const patientRecived = await patientService.getPatient(id);
         const newPatient = { 
           ...patientRecived, 
@@ -122,6 +131,45 @@ const PatientPage = () => {
     }
   }, [id]);
 
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+  
+  const submitNewPatient = async (values: EntryFormValues) => {
+    console.log(values);
+    try {
+      if (patient && patient.id) {
+        const entry = await patientService.addEntry(patient.id, values);
+        const updatedPatient = {
+          ...patient,
+          entries: [...patient.entries, entry]
+        };
+        setPatient(updatedPatient);
+        setModalOpen(false);
+      }
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
+
+
   const getGenderIcon = (gender: string) => {
     switch (gender) {
       case Gender.Male:
@@ -141,6 +189,16 @@ const PatientPage = () => {
         <h2>{patient.name} {getGenderIcon(patient.gender)}</h2>
         <div>ssh: {patient.ssn}</div>
         <div>occupation: {patient.occupation}</div>
+        <AddEntryModal
+          modalOpen={modalOpen}
+          onSubmit={submitNewPatient}
+          allCodes={allCodes}
+          error={error}
+          onClose={closeModal}
+        />
+        <Button variant="contained" onClick={() => openModal()}>
+          Add New Entry
+        </Button>
         {patient.entries ? (
           <div>
             <h3>entries</h3>
