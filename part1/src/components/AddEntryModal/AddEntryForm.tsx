@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EntryFormValues, HealthCheckEntry, HealthCheckRating, HospitalEntry, OccupationalHealthCareEntry } from "../../types";
+import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Box, Typography } from "@mui/material";
 
 interface Props {
   onCancel: () => void;
@@ -75,33 +76,67 @@ const AddEntryForm = ({ onCancel, onSubmit, allCodes }: Props) => {
         return;
     }
 
-    console.log('Data to be submitted:', fullEntry);
     onSubmit(fullEntry);
   };
 
   return (
-    <div style={{ padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '600px' }}>
+    <Box sx={{ padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '600px' }}>
+      <Typography variant="h6">Add New Entry</Typography>
 
-      <label>Tipo:</label>
-      <select value={type} onChange={(e) => setType(e.target.value as EntryFormValues['type'])}>
-        <option value="HealthCheck">Health Check</option>
-        <option value="Hospital">Hospital</option>
-        <option value="OccupationalHealthcare">Occupational Healthcare</option>
-      </select>
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Tipo</InputLabel>
+        <Select value={type} onChange={(e) => setType(e.target.value as EntryFormValues['type'])}>
+          <MenuItem value="HealthCheck">Health Check</MenuItem>
+          <MenuItem value="Hospital">Hospital</MenuItem>
+          <MenuItem value="OccupationalHealthcare">Occupational Healthcare</MenuItem>
+        </Select>
+      </FormControl>
 
-      <input name="description" placeholder="Descripción" value={baseFields.description} onChange={handleBaseChange} />
-      <input name="date" type="date" value={baseFields.date} onChange={handleBaseChange} />
-      <input name="specialist" placeholder="Especialista" value={baseFields.specialist} onChange={handleBaseChange} />
+      <TextField
+        fullWidth
+        margin="normal"
+        name="description"
+        label="Descripción"
+        value={baseFields.description}
+        onChange={handleBaseChange}
+      />
+      <TextField
+        fullWidth
+        margin="normal"
+        name="date"
+        type="date"
+        label="Fecha"
+        InputLabelProps={{ shrink: true }}
+        value={baseFields.date}
+        onChange={handleBaseChange}
+      />
+      <TextField
+        fullWidth
+        margin="normal"
+        name="specialist"
+        label="Especialista"
+        value={baseFields.specialist}
+        onChange={handleBaseChange}
+      />
 
-      <div style={{ marginTop: '1rem' }}>
-        <select value={codeInput} onChange={(e) => setCodeInput(e.target.value)}>
-          {allCodes.map((code) => (
-            <option key={code} value={code}>{code}</option>
-          ))}
-        </select>
-        <input placeholder="Descripción" value={descInput} onChange={(e) => setDescInput(e.target.value)} />
-        <button onClick={handleAddDiagnosis}>add diagnosis</button>
-      </div>
+      <Box sx={{ marginTop: '1rem' }}>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Código de Diagnóstico</InputLabel>
+          <Select value={codeInput} onChange={(e) => setCodeInput(e.target.value)}>
+            {allCodes.map((code) => (
+              <MenuItem key={code} value={code}>{code}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Descripción"
+          value={descInput}
+          onChange={(e) => setDescInput(e.target.value)}
+        />
+        <Button variant="contained" onClick={handleAddDiagnosis}>Añadir Diagnóstico</Button>
+      </Box>
       <ul>
         {diagnosisCodes.map((code, i) => (
           <li key={code}>{code} - {diagnosisDescriptions[i]}</li>
@@ -109,36 +144,71 @@ const AddEntryForm = ({ onCancel, onSubmit, allCodes }: Props) => {
       </ul>
 
       {type === 'HealthCheck' && (
-        <div>
-          <label>Health Check Rating:</label>
-          <select value={healthCheckRating} onChange={(e) => setHealthCheckRating(Number(e.target.value))}>
-            <option value={HealthCheckRating.Healthy}>Healthy</option>
-            <option value={HealthCheckRating.LowRisk}>Low Risk</option>
-            <option value={HealthCheckRating.HighRisk}>High Risk</option>
-            <option value={HealthCheckRating.CriticalRisk}>Critical Risk</option>
-          </select>
-        </div>
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Health Check Rating</InputLabel>
+          <Select value={healthCheckRating} onChange={(e) => setHealthCheckRating(Number(e.target.value))}>
+            <MenuItem value={HealthCheckRating.Healthy}>Healthy</MenuItem>
+            <MenuItem value={HealthCheckRating.LowRisk}>Low Risk</MenuItem>
+            <MenuItem value={HealthCheckRating.HighRisk}>High Risk</MenuItem>
+            <MenuItem value={HealthCheckRating.CriticalRisk}>Critical Risk</MenuItem>
+          </Select>
+        </FormControl>
       )}
 
       {type === 'Hospital' && (
-        <div>
-          <input placeholder="Discharge Date" type="date" value={discharge.date} onChange={(e) => setDischarge({ ...discharge, date: e.target.value })} />
-          <input placeholder="Discharge Criteria" value={discharge.criteria} onChange={(e) => setDischarge({ ...discharge, criteria: e.target.value })} />
-        </div>
+        <Box>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Discharge Date"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={discharge.date}
+            onChange={(e) => setDischarge({ ...discharge, date: e.target.value })}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Discharge Criteria"
+            value={discharge.criteria}
+            onChange={(e) => setDischarge({ ...discharge, criteria: e.target.value })}
+          />
+        </Box>
       )}
 
       {type === 'OccupationalHealthcare' && (
-        <div>
-          <input placeholder="Employer Name" value={employerName} onChange={(e) => setEmployerName(e.target.value)} />
-          <input placeholder="Sick Leave Start" type="date" value={sickLeave.startDate} onChange={(e) => setSickLeave({ ...sickLeave, startDate: e.target.value })} />
-          <input placeholder="Sick Leave End" type="date" value={sickLeave.endDate} onChange={(e) => setSickLeave({ ...sickLeave, endDate: e.target.value })} />
-        </div>
+        <Box>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Employer Name"
+            value={employerName}
+            onChange={(e) => setEmployerName(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Sick Leave Start"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={sickLeave.startDate}
+            onChange={(e) => setSickLeave({ ...sickLeave, startDate: e.target.value })}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Sick Leave End"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={sickLeave.endDate}
+            onChange={(e) => setSickLeave({ ...sickLeave, endDate: e.target.value })}
+          />
+        </Box>
       )}
-      <button onClick={onCancel} style={{ marginTop: '1rem' }}>Cancel</button>
-      <button onClick={handleSubmit} style={{ marginTop: '1rem' }}>Save Entry</button>
-    </div>
+      <Button variant="outlined" onClick={onCancel} sx={{ marginTop: '1rem' }}>Cancel</Button>
+      <Button variant="contained" onClick={handleSubmit} sx={{ marginTop: '1rem' }}>Save Entry</Button>
+    </Box>
   );
 };
-
 
 export default AddEntryForm;
